@@ -1,0 +1,33 @@
+version: '2.2'
+
+services:
+  web:
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    develop:
+      watch:
+        - path: ./package.json
+          action: rebuild
+        - path: ./next.config.js
+          action: rebuild
+        - path: ./package-lock.json
+          action: rebuild
+        - path: .
+          target: /app
+          action: sync
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - CRUD:/data/db
+
+volumes:
+  CRUD:
